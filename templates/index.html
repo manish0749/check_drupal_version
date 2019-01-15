@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check Drupal</title>
+</head>
+<body>
+<form method="POST" action="/">
+    Input URLs(comma seperated urls upto 50):<br>
+    <textarea type="text" name="urls" rows="5" cols="50"></textarea><br>
+    <input type="submit">
+</form>
+{% if urls %}
+    <hr>
+    <table>
+        <tr>
+            <th>URL</th>
+            <th>Version</th>
+        </tr>
+        {% for url,version in urls %}
+            <tr>
+                <td>{{ url }}</td>
+                <td>{{ version }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+</body>
+</html>
