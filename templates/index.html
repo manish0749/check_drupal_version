@@ -3,24 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Check Drupal</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
 </head>
 <body>
 <form method="POST" action="/">
-    Input URLs(comma seperated urls upto 50):<br>
+    Input URLs(seperated by line break):<br>
+    (upto 50 urls allowed)<br>
     <textarea type="text" name="urls" rows="5" cols="50" required></textarea><br>
     <input type="submit">
 </form>
 {% if urls %}
-    <hr>
-    <table>
+    <br>
+    <table class="table table-hover">
+        <thead>
         <tr>
-            <th>URL</th>
-            <th>Drupal Version</th>
-            <th>Status Code</th>
+            <th scope="col">URL</th>
+            <th scope="col">Drupal Version</th>
+            <th scope="col">Status Code</th>
         </tr>
+        </thead>
         {% for url,version,st in urls %}
             <tr>
-                <td>{{ url }}</td>
+                <th scope="row">{{ url }}</th>
                 <td>{{ version }}</td>
                 <td>{{ st }}</td>
             </tr>
@@ -28,9 +32,8 @@
     </table>
     <br>
     {% if urls %}
-        <a href="/return-files">Download CSV</a>
+        <button type="button" class="btn btn-primary" onclick="window.location='/return-files' ">Download CSV</button>
     {% endif %}
 {% endif %}
-
 </body>
 </html>

@@ -10,7 +10,8 @@ app.config["FILE_LOCATION"] = os.path.join(os.getcwd(), "csv_files")
 API_KEY = "wappalyzer.api.demo.key"
 
 
-def check_drupal(jsn):
+def wapp(jsn):
+    print(jsn)
     if len(jsn) == 0:
         return None
     for item in jsn[0]['applications']:
@@ -18,11 +19,27 @@ def check_drupal(jsn):
             return item['versions'][0]
 
 
+def check_drupal_version(url, api, headers):
+    turl = urlparse(url)
+    if turl.scheme == "":
+        url = f"http://{url}"
+    try:
+        req = requests.get(url, timeout=10)
+        req = requests.get(api, params={"url": url}, headers=headers)
+        if req.status_code == 200:
+            return url, wapp(req.json()), req.status_code
+        else:
+            return url, None, req.status_code
+    except Exception as e:
+        app.logger.error(e)
+        return url, None, "Invalid url."
+
+
 @app.route("/", methods=["POST", "GET"])
 def is_drupal():
     version = []
     if request.method == "POST":
-        urls = request.form['urls'].split(',')
+        urls = request.form['urls'].split('\n')
         if len(urls) > 50:
             return "max length exceeds. Only 50 urls allowed at a time.", 400
         api = "https://api.wappalyzer.com/lookup/v1/"
@@ -32,19 +49,10 @@ def is_drupal():
         writer = csv.writer(file)
         writer.writerow(["URL", "Drupal Version", "Status Code"])
         for url in urls:
-            turl = urlparse(url)
-            if turl.scheme == "":
-                url = f"http://{url}"
-            try:
-                req = requests.get(url)
-                req = requests.get(api, params={"url": url}, headers=headers)
-                if req.status_code == 200:
-                    version.append((url, check_drupal(req.json()), req.status_code))
-                else:
-                    version.append((url, None, req.status_code))
-            except Exception as e:
-                version.append((url, None, "Invalid url."))
-            writer.writerow(version[-1])
+            for item in url.split(' '):
+                version.append(check_drupal_version(item, api, headers))
+                writer.writerow(version[-1])
+        file.close()
     return render_template("index.html", urls=version)
 
 
