@@ -22,7 +22,7 @@ def wapp(jsn):
 def check_drupal_version(url, api, headers):
     turl = urlparse(url)
     if turl.scheme == "":
-        url = f"http://{url}"
+        url = "http://{}".format(url)
     try:
         req = requests.get(url, timeout=10)
         req = requests.get(api, params={"url": url}, headers=headers)
@@ -44,7 +44,7 @@ def is_drupal():
             return "max length exceeds. Only 50 urls allowed at a time.", 400
         api = "https://api.wappalyzer.com/lookup/v1/"
         headers = {"X-Api-Key": API_KEY}
-        filename = os.path.join(app.config["FILE_LOCATION"], f"{request.remote_addr}.csv")
+        filename = os.path.join(app.config["FILE_LOCATION"], "{}.csv".format(request.remote_addr))
         file = open(filename, 'w')
         writer = csv.writer(file)
         writer.writerow(["URL", "Drupal Version", "Status Code"])
@@ -58,7 +58,8 @@ def is_drupal():
 
 @app.route('/return-files', methods=['GET'])
 def return_file():
-    return send_from_directory(app.config["FILE_LOCATION"], as_attachment=True, filename=f"{request.remote_addr}.csv")
+    return send_from_directory(app.config["FILE_LOCATION"], as_attachment=True,
+                               filename="{}.csv".format(request.remote_addr))
 
 
 if __name__ == '__main__':
