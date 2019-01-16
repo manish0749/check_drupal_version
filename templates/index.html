@@ -7,7 +7,7 @@
 <body>
 <form method="POST" action="/">
     Input URLs(comma seperated urls upto 50):<br>
-    <textarea type="text" name="urls" rows="5" cols="50"></textarea><br>
+    <textarea type="text" name="urls" rows="5" cols="50" required></textarea><br>
     <input type="submit">
 </form>
 {% if urls %}
@@ -15,15 +15,21 @@
     <table>
         <tr>
             <th>URL</th>
-            <th>Version</th>
+            <th>Drupal Version</th>
+            <th>Status Code</th>
         </tr>
-        {% for url,version in urls %}
+        {% for url,version,st in urls %}
             <tr>
                 <td>{{ url }}</td>
                 <td>{{ version }}</td>
+                <td>{{ st }}</td>
             </tr>
         {% endfor %}
     </table>
+    <br>
+    {% if urls %}
+        <a href="/return-files">Download CSV</a>
+    {% endif %}
 {% endif %}
 
 </body>
