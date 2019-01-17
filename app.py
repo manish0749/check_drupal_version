@@ -52,13 +52,17 @@ def is_drupal():
         file = open(filename, 'w')
         writer = csv.writer(file)
         writer.writerow(["URL", "Drupal Version", "Status Code"])
+        cnt=0
         for url in urls:
             for item in url.split(' '):
+                cnt+=1
                 item = item.strip()
                 if len(item) == 0:
                     continue
                 version.append(check_drupal_version(item, api, headers))
                 writer.writerow(version[-1])
+            if cnt>=50:
+                break
         file.close()
     return render_template("index.html", urls=version)
 
