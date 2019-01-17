@@ -1,13 +1,13 @@
 import csv
-import os
 from urllib.parse import urlparse
 
 import requests
-from flask import Flask, render_template, request, send_from_directory, send_file
+from flask import Flask, render_template, request, send_from_directory
+
+from settings import *
 
 app = Flask(__name__)
-app.config["FILE_LOCATION"] = os.path.join(os.getcwd(), "csv_files")
-API_KEY = "wappalyzer.api.demo.key"
+app.config["FILE_LOCATION"] = CSV_LOCATIONS
 
 
 def wapp(jsn):
@@ -24,12 +24,12 @@ def check_drupal_version(url, api, headers):
     if turl.scheme == "":
         url = "http://{}".format(url)
     try:
-        req = requests.get(url, timeout=10)
-        req = requests.get(api, params={"url": url}, headers=headers)
-        if req.status_code == 200:
-            return url, wapp(req.json()), req.status_code
-        else:
-            return url, None, req.status_code
+        req = requests.get(url, timeout=REQUEST_TIMEOUT, headers=headers)
+        if req.status_code < 400:
+            req = requests.get(api, params={"url": url}, headers=headers)
+            if req.status_code == 200:
+                return url, wapp(req.json()), req.status_code
+        return url, None, req.status_code
     except Exception as e:
         app.logger.error(e)
         return url, None, "Invalid url."
@@ -43,7 +43,7 @@ def is_drupal():
         if len(urls) > 50:
             return "max length exceeds. Only 50 urls allowed at a time.", 400
         api = "https://api.wappalyzer.com/lookup/v1/"
-        headers = {"X-Api-Key": API_KEY}
+        headers = {"X-Api-Key": API_KEY, "User-Agent": USER_AGENT}
         filename = os.path.join(app.config["FILE_LOCATION"], "{}.csv".format(request.remote_addr))
         file = open(filename, 'w')
         writer = csv.writer(file)
