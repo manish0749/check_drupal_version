@@ -16,7 +16,9 @@ def wapp(jsn):
         return None
     for item in jsn[0]['applications']:
         if item['name'] == 'Drupal':
-            return item['versions'][0]
+            version = "D" if len(item['versions']) == 0 else "D{}".format(item['versions'][0])
+            app.logger.info("wappalyzer found drupal version : {}".format(version))
+            return version
 
 
 def check_drupal_version(url, api, headers):
@@ -26,7 +28,9 @@ def check_drupal_version(url, api, headers):
     try:
         req = requests.get(url, timeout=REQUEST_TIMEOUT, headers=headers)
         if req.status_code < 400:
+            app.logger.info("wappalyzer request to: {}".format(url))
             req = requests.get(api, params={"url": url}, headers=headers)
+            app.logger.info("wappalyzer reponded with status code: {}".format(req.status_code))
             if req.status_code == 200:
                 return url, wapp(req.json()), req.status_code
         return url, None, req.status_code
@@ -50,6 +54,9 @@ def is_drupal():
         writer.writerow(["URL", "Drupal Version", "Status Code"])
         for url in urls:
             for item in url.split(' '):
+                item = item.strip()
+                if len(item) == 0:
+                    continue
                 version.append(check_drupal_version(item, api, headers))
                 writer.writerow(version[-1])
         file.close()
