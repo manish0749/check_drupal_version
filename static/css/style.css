@@ -1,0 +1,42 @@
+.urls-form {
+  max-width: 550px;
+  margin: 0 auto;
+}
+
+.url-form-title {
+  margin: 15px 0px;
+}
+
+.url-form-title h2 {
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.url-submit-btn .btn {
+  border-radius: 0px;
+  min-width: 110px;
+}
+
+.url-submit-btn {
+  margin-bottom: 15px;
+}
+
+.url-search-result-table {
+  margin-top: 30px;
+}
+
+.urls-form textarea {
+  border-radius: 0px;
+  border-color: #3986d8;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.52);
+}
+
+.url-search-result-table table th {
+  text-transform: capitalize;
+  color: #0069d9;
+}
+
+.url-search-result-table table td:nth-child(2) {
+  color: #0069d9;
+}
