@@ -32,31 +32,34 @@
 
             <div class="url-search-result-table">
                 <div class="table-responsive">
-                {% if urls %}
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>URL</th>
-                            <th>drupal version</th>
-                            <th>Status Code</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for url,version,status_code in urls %}
+                    {% if urls %}
+                        <table class="table table-hover">
+                            <thead>
                             <tr>
-                                <td>{{ url }}</td>
-                                <td>{{ version }}</td>
-                                <td>{{ status_code }}</td>
+                                <th>URL</th>
+                                <th>drupal version</th>
+                                <th>Status Code</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
-                </div>
+                            </thead>
+                            <tbody>
+                            {% for url,version,status_code in urls %}
+                                <tr>
+                                    <td>{{ url }}</td>
+                                    <td>{{ version }}</td>
+                                    <td>{{ status_code }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
 
-                <div class="text-right url-submit-btn">
-                    <button type="button" class="btn btn-primary" onclick="window.location='/return-files'">Download CSV</button>
-                </div>
+                        </div>
+
+                        <div class="text-right url-submit-btn">
+                            <button type="button" class="btn btn-primary" onclick="window.location='/return-files'">
+                                Download CSV
+                            </button>
+                        </div>
+                    {% endif %}
             </div>
         </div>
     </div>
