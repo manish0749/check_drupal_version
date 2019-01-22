@@ -12,7 +12,8 @@ def init_db():
                 ip varchar(50) not null,
                 url varchar(700) not null,
                 version varchar(7),
-                status_code int
+                status_code int,
+                time timestamp default NOW()
                 );
                 """
     try:
@@ -30,7 +31,7 @@ def init_db():
 
 
 def insert(ip, url, version, status_code):
-    query = "insert into logs value('{}','{}','{}',{});".format(ip, url, version, status_code)
+    query = "insert into logs(ip,url,version,status_code) value('{}','{}','{}',{});".format(ip, url, version, status_code)
     try:
         with conn.cursor() as cursor:
             conn.select_db(MYSQL_DB)

@@ -57,7 +57,7 @@ def is_drupal():
         writer = csv.writer(file)
         writer.writerow(["URL", "Drupal Version", "Status Code"])
         cnt=0
-        ip=request.remote_addr
+        ip=request.environ['REMOTE_ADDR']
         for url in urls:
             for item in url.split(' '):
                 cnt+=1
