@@ -6,14 +6,13 @@ conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASSWORD
 
 
 def init_db():
-    db_query = f"create database if not exists {MYSQL_DB};"
+    db_query = "create database if not exists {};".format(MYSQL_DB)
     table_query = """
                 create table if not exists logs(
                 ip varchar(50) not null,
                 url varchar(700) not null,
                 version varchar(7),
-                status_code int,
-                constraint pk1 PRIMARY KEY (ip,url)
+                status_code int
                 );
                 """
     try:
@@ -31,7 +30,7 @@ def init_db():
 
 
 def insert(ip, url, version, status_code):
-    query = f"insert into logs value('{ip}','{url}','{version}',{status_code});"
+    query = "insert into logs value('{}','{}','{}',{});".format(ip, url, version, status_code)
     try:
         with conn.cursor() as cursor:
             conn.select_db(MYSQL_DB)
