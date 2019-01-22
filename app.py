@@ -1,5 +1,6 @@
 import csv
 from urllib.parse import urlparse
+import model
 
 import requests
 from flask import Flask, render_template, request, send_from_directory
@@ -21,19 +22,22 @@ def wapp(jsn):
             return version
 
 
-def check_drupal_version(url, api, headers):
+def check_drupal_version(url, api, headers,ip):
     turl = urlparse(url)
     if turl.scheme == "":
         url = "http://{}".format(url)
     try:
         req = requests.get(url, timeout=REQUEST_TIMEOUT, headers=headers)
+        version=None
         if req.status_code < 400:
             app.logger.info("wappalyzer request to: {}".format(url))
             req = requests.get(api, params={"url": url}, headers=headers)
             app.logger.info("wappalyzer reponded with status code: {}".format(req.status_code))
             if req.status_code == 200:
-                return url, wapp(req.json()), req.status_code
-        return url, None, req.status_code
+                version=wapp(req.json())
+                # return url, version, req.status_code
+        model.insert(ip,url,version,req.status_code)
+        return url, version, req.status_code
     except Exception as e:
         app.logger.error(e)
         return url, None, "Invalid url."
@@ -53,13 +57,14 @@ def is_drupal():
         writer = csv.writer(file)
         writer.writerow(["URL", "Drupal Version", "Status Code"])
         cnt=0
+        ip=request.remote_addr
         for url in urls:
             for item in url.split(' '):
                 cnt+=1
                 item = item.strip()
                 if len(item) == 0:
                     continue
-                version.append(check_drupal_version(item, api, headers))
+                version.append(check_drupal_version(item, api, headers,ip))
                 writer.writerow(version[-1])
             if cnt>=50:
                 break
